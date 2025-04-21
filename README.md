@@ -15,13 +15,14 @@ A complete e-commerce microservice implementation with API Gateway, Product Serv
 - [Containerization with Docker](#containerization-with-docker)
 
 ## Project Structure
+```
 go-ecommerce/
 ├── api-gateway/ # API Gateway service
 ├── product-service/ # Product catalog service
 ├── order-service/ # Order processing service
 ├── cli/ # Command line interface
 └── README.md # This documentation
-
+```
 
 ## Services Overview
 
@@ -52,10 +53,10 @@ go-ecommerce/
 ### Installation
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/go-ecommerce.git
-   cd go-ecommerce
-   ```
+    ```bash
+    git clone https://github.com/yourusername/go-ecommerce.git
+    cd go-ecommerce
+    ```
 
 2. Install dependencies:
     ```bash
@@ -67,7 +68,7 @@ go-ecommerce/
 ### Local Development
 
 Run each service in separate terminals:
-    ```bash
+
     # Terminal 1 - Product Service
     cd product-service
     go run main.go
@@ -79,83 +80,78 @@ Run each service in separate terminals:
     # Terminal 3 - API Gateway
     cd ../api-gateway
     go run main.go
-    ```
+
 
 ### Building the CLI
-    ```bash
+
     cd cli
     go build -o ecomcli.exe  # .exe for Windows
-    ```
+
 
 ## CLI Usage
-    ```bash
+
     # List all products
     ./ecomcli list-products
 
     # Create new order
     ./ecomcli create-order --product-id=1
-    ```
+
 
 ## API Endpoints
 
 Product Service
 
-- **GET /products** - List all products
-- **GET /products/{id}** - Get products details
+- ```GET /products``` - List all products
+- ```GET /products/{id}``` - Get products details
 
 Order Service
 
-- **GET /orders** - List all orders
-- **POST /orders** - Create new order
+- ```GET /orders``` - List all orders
+- ```POST /orders``` - Create new order
 
 ## Containerization with Docker
 
 1. Create Dockerfile for each service
 
-Example for product-service/Dockerfile:
-    ```dockerfile
-    # Build stage
-    FROM golang:1.21 as builder
-    WORKDIR /app
-    COPY . .
-    RUN go mod download
-    RUN CGO_ENABLED=0 GOOS=linux go build -o product-service
+    Example for product-service/Dockerfile:
 
-    # Final stage
-    FROM alpine:latest
-    WORKDIR /app
-    COPY --from=builder /app/product-service .
-    EXPOSE 8081
-    CMD ["./product-service"]
-    ```
+        FROM golang:1.21-alpine AS builder
+        WORKDIR /app
+        COPY go.mod go.sum ./
+        RUN go mod download
+        COPY . .
+        RUN CGO_ENABLED=0 GOOS=linux go build -o order-service
+
+        FROM alpine:latest
+        WORKDIR /app
+        COPY --from=builder /app/order-service .
+        EXPOSE 8082
+        CMD ["./order-service"]
 
 2. Create docker-compose.yml
 
-    ```yaml
-    version: '3.8'
+        version: '3.8'
 
-    services:
-    api-gateway:
-        build: ./api-gateway
-        ports:
-        - "8080:8080"
-        depends_on:
-        - product-service
-        - order-service
+        services:
+        api-gateway:
+            build: ./api-gateway
+            ports:
+            - "8080:8080"
+            depends_on:
+            - product-service
+            - order-service
 
-    product-service:
-        build: ./product-service
-        ports:
-        - "8081:8081"
+        product-service:
+            build: ./product-service
+            ports:
+            - "8081:8081"
 
-    order-service:
-        build: ./order-service
-        ports:
-        - "8082:8082"
-    ```
+        order-service:
+            build: ./order-service
+            ports:
+            - "8082:8082"
+
 
 3. Build and run
 
-    ```bash
-    docker-compose up --build
-    ```
+        docker-compose up --build

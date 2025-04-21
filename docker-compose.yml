@@ -18,10 +18,3 @@ services:
     build: ./order-service
     ports:
       - "8082:8082"
-
-  cli:
-    build: ./cli
-    depends_on:
-      - api-gateway
-    stdin_open: true  # Required for interactive input
-    tty: true        # Required for interactive input
