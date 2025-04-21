@@ -13,7 +13,6 @@ A complete e-commerce microservice implementation with API Gateway, Product Serv
 - [API Endpoints](#api-endpoints)
 - [Adding Logging](#adding-logging)
 - [Containerization with Docker](#containerization-with-docker)
-- [Future Improvements](#future-improvements)
 
 ## Project Structure
 go-ecommerce/
